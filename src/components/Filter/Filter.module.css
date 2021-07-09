@@ -1,0 +1,29 @@
+.label {
+  padding: 15px 20px;
+}
+
+.span {
+  display: block;
+  font-size: 35px;
+  margin-left: 110px;
+  padding-bottom: 20px;
+  color: #00ba63;
+}
+
+.input {
+  height: 60px;
+  margin-left: 40px;
+  border: 1px solid #00ba63;
+  border-radius: 26px;
+  padding-left: 25px;
+  cursor: pointer;
+  width: 300px;
+  font-size: 20px;
+}
+.input:focus,
+:hover {
+  border-color: tomato;
+}
+.input:focus {
+  outline: none;
+}
