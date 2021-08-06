@@ -1,5 +1,11 @@
 .label {
-  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  border: 1px solid #4444;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 30px;
 }
 
 .span {

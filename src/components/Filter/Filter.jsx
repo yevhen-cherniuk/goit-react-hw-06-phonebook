@@ -1,22 +1,39 @@
 import React from "react";
-import { v4 as uuidv4 } from "uuid";
+import { connect } from 'react-redux';
+import phonebookActions from "../../redux/phonebook/phonebookActions";
+import PropTypes from 'prop-types';
 import style from "./Filter.module.css";
 
-const filterInputId = uuidv4();
+const Filter = ({ filter, onChange }) => {
+  const handleChange = (e) => {
+    onChange(e.target.value);
+  };
 
-const Filter = ({ filter, onChangeFilter }) => {
   return (
-    <label htmlFor={filterInputId}>
+    <label className={style.label}>
       <span className={style.span}>Find contacts</span>
       <input
         className={style.input}
         type="text"
+        placeholder="name"
         value={filter}
-        onChange={onChangeFilter}
-        id={filterInputId}
+        onChange={handleChange}
       />
     </label>
   );
 };
 
-export default Filter;
+Filter.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = ({ contacts }) => ({
+  filter: contacts.filter,
+});
+
+const mapDispatchToprops = {
+  onChange: phonebookActions.filter,
+};
+
+export default connect(mapStateToProps, mapDispatchToprops)(Filter);

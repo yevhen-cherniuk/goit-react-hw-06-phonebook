@@ -1,103 +1,44 @@
 import React, { Component } from 'react';
-import { v4 as uuidv4 } from "uuid";
-import PropTypes from "prop-types";
+import { connect } from 'react-redux';
 import "./App.css";
+import { CSSTransition } from "react-transition-group";
 
 // Components
 import Container from './components/Container/Container';
-import ContactForm from './components/ContactForm/ContactForm';
+import FormAddContacts from "./components/FormAddContacts/FormAddContacts";
 import ContactList from './components/ContactList/ContactList';
 import Filter from './components/Filter/Filter';
 
 class App extends Component {
-  static defaultProps = {
-    contacts:  [
-      { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-      { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-      { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-      { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-    ],
-    filter: "",
-  };
-
-  static propTypes = {
-    contacts: PropTypes.array,
-    filter: PropTypes.string,
-  };
-
-  state = {
-    contacts: this.props.contacts,
-    filter: this.props.filter,
-  };
-
-  formAddContact = ({ name, number }) => {
-    const { contacts } = this.state;
-    const contact = {
-      name: name,
-      number: number,
-      id: uuidv4(),
-    };
-    contacts.some(
-      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
-    )
-      ? alert(`${name} is already in contacts`)
-      : contacts.some(({ number }) => number === contact.number)
-      ? alert(`${number} is already in contacts`)
-      : this.setState(({ contacts }) => ({ contacts: [contact, ...contacts] }));
-  };
-
-  componentDidMount() {
-    const localContacts = JSON.parse(localStorage.getItem("contacts"));
-    if (localContacts) {
-      this.setState({ contacts: localContacts });
-    }
-  }
-
   componentDidUpdate(prevProps, PrevState) {
-    if (PrevState.contacts !== this.state.contacts) {
-      const localContacts = JSON.stringify(this.state.contacts);
+    if (prevProps.contacts !== this.props.contacts) {
+      const localContacts = JSON.stringify(this.props.contacts);
       localStorage.setItem("contacts", localContacts);
     }
   }
 
-  deleteContact = (contactId) => {
-    this.setState((prevState) => ({
-      contacts: prevState.contacts.filter(({ id }) => id !== contactId),
-    }));
-  };
-
-  changeFilter = (e) => {
-    this.setState({ filter: e.currentTarget.value });
-  };
-
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(
-      (contact) =>
-        contact.name.toLowerCase().includes(normalizedFilter) ||
-        contact.number.includes(filter)
-    );
-  };
-
   render() {
-    const { filter } = this.state;
-    const visibleContacts = this.getVisibleContacts();
+    const { contacts } = this.props;
+
 
     return (
       <Container title="Phonebook">
-        <h1 className="title">Phonebook</h1> 
-        <ContactForm onSubmit={this.formAddContact} />
+        <CSSTransition in={true} appear={true} timeout={500} classNames="fade-logo" unmountOnExit>
+          <h1 className="title">Phonebook</h1> 
+        </CSSTransition>        
+        <FormAddContacts />
         <h2 className="title">Contacts</h2>
-        <Filter filter={filter} onChangeFilter={this.changeFilter} />
-        <ContactList
-          contacts={visibleContacts}
-          deleteContact={this.deleteContact}
-        />
+          <CSSTransition in={contacts.length > 1} timeout={500} classNames="fade-filter" unmountOnExit>
+            <Filter />
+          </CSSTransition>
+        <ContactList />
       </Container>
     );
   }
 }
 
-export default App;
+const mapStateToProps = ({ contacts }) => ({
+  contacts: contacts.items,
+});
+
+export default connect(mapStateToProps)(App);
